@@ -1,0 +1,37 @@
+type Query {
+    getUsuarios: [Usuario]
+    getEmpleadores: [Empleador]
+}
+
+type Mutation {
+    createUsuario(nombres: String, apellidos: String, email: String!, rut: String, sexo: String, pais: String, fecha_nacimiento: String, uid: String): Usuario
+    createEmpleador(nombres: String, apellido: String,
+    email: String, rut_empresa: String, nombre_empresa: String, uid: String): Empleador
+}
+
+type AuthPayload {
+  token: String!
+  user: Usuario!
+}
+
+type Usuario {
+    id: ID!,
+    nombres: String,
+    apellidos: String,
+    email: String!,
+    rut: String,
+    sexo: String,
+    pais: String,
+    fecha_nacimiento: String,
+    uid: String
+}
+
+type Empleador {
+    id: ID!,
+    nombres: String,
+    apellidos: String,
+    email: String,
+    rut_empresa: String,
+    nombre_empresa: String,
+    uid: String
+}
