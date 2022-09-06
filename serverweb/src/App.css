@@ -32,7 +32,41 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.cabecera {
+  background: linear-gradient(45deg, #3f51b5 0%, #7986cb 100%);
+}
+
+.jss3 {
+  padding-top: 6rem !important;
+  padding-bottom: 6rem !important;
+}
+
+
+.container {
+  margin: 0 auto;
+  padding: 0px 1rem;
+  max-width: 1170px;
+}
+
+.text-white {
+  color: #fff !important;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }

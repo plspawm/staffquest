@@ -19,6 +19,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import esLocale from 'date-fns/locale/es';
 import Alert from '@mui/material/Alert';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 /** GRAPHQL */
 import { useQuery, gql, useMutation } from "@apollo/client";
@@ -27,57 +28,66 @@ import { useQuery, gql, useMutation } from "@apollo/client";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import firebaseApp from "../firebase/credentials";
 
-const CREATE_USER = gql`
-    mutation createUsuario($nombres: String, $apellidos: String, $email: String!, $uid: String) {
-        createUsuario(nombres: $nombres, apellidos: $apellidos, email: $email, uid: $uid) {
+const CREATE_EMPLEADOR = gql`
+    mutation createEmpleador($nombres: String, $apellido: String, $email: String!, $uid: String, $tel_contacto: String, 
+    $rut_empresa: String, $nombre_empresa: String) {
+        createEmpleador(nombres: $nombres, apellido: $apellido, email: $email, uid: $uid, tel_contacto: $tel_contacto,
+        rut_empresa: $rut_empresa, nombre_empresa: $nombre_empresa) {
             nombres,
-            uid
+            uid,
+            nombre_empresa,
+            email
         }
     }
 `;
 
-const RegistroUsuario = () => {
-    const theme = createTheme();
-    const [value, setValue] = useState(null);
-    const [crearUsuario, {loaging, error, data}] = useMutation(CREATE_USER);
+const RegistroEmpleador = () => {
     const [usuario, setUsuario] = useState('');
-    const [formErrors, setFormErrors] = useState({});
     const auth = getAuth(firebaseApp);
+    const [formErrors, setFormErrors] = useState({});
+    const [crearEmpleador, { loaging, error, data }] = useMutation(CREATE_EMPLEADOR);
+    const theme = createTheme();
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    if(data) {
-        console.log("Usuario creado", data);
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if(!validateForm(usuario)) {
-            return;
-        }
-
-        createUserWithEmailAndPassword(auth,usuario.email,usuario.password)
-        .then(resp=>{
-            crearUsuario({variables: {
-                nombres: usuario.nombres,
-                apellidos: usuario.apellidos,
-                email: usuario.email,
-                uid: resp.user.uid
-            }});
-        })
-        .catch(err=>{
-            console.error(err);
-        });
-
-        
+    if (error) {
+        console.error(error.message);
     }
 
     const handleChangeUsuario = (valor, nombre) => {
-        setUsuario({...usuario,[nombre]: valor})
+        setUsuario({ ...usuario, [nombre]: valor })
+    }
+
+    const ingresarEmpleador = (e) => {
+        e.preventDefault();
+        if (!validateForm(usuario)) {
+            return;
+        }
+
+        createUserWithEmailAndPassword(auth, usuario.email, usuario.password)
+            .then(user => {
+                crearEmpleador({
+                    variables: {
+                        nombres: usuario.nombres,
+                        apellido: usuario.apellido,
+                        email: usuario.email,
+                        uid: user.user.uid,
+                        tel_contacto: usuario.tel_contacto,
+                        rut_empresa: usuario.rut_empresa,
+                        nombre_empresa: usuario.nombre_empresa
+                    }
+                });
+                enqueueSnackbar('Usuario registrado con exito!', {variant: 'success'});
+            })
+            .catch(err => {
+                console.error(err);
+                enqueueSnackbar(err.message, {variant: 'error'});
+            });
     }
 
     const validateForm = () => {
         let errors = {};
 
-        if(usuario.password !== usuario.password_confirm) {
+        if (usuario.password !== usuario.password_confirm) {
             errors.password = "El password debe ser el mismo!";
         }
 
@@ -88,7 +98,6 @@ const RegistroUsuario = () => {
             return false;
         }
     }
-
 
     return (
         <ThemeProvider theme={theme}>
@@ -108,7 +117,7 @@ const RegistroUsuario = () => {
                     <Typography component="h1" variant="h5">
                         Registro
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate onSubmit={ingresarEmpleador} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
@@ -119,70 +128,52 @@ const RegistroUsuario = () => {
                                     id="nombres"
                                     label="Nombres"
                                     autoFocus
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"nombres")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "nombres")}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
                                     fullWidth
-                                    id="apellidos"
-                                    label="Apellidos"
-                                    name="apellidos"
+                                    id="apellido"
+                                    label="Apellido"
+                                    name="apellido"
                                     autoComplete="family-name"
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"apellidos")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "apellido")}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="rut"
+                                    name="rut_empresa"
                                     required
                                     fullWidth
-                                    id="rut"
-                                    label="Rut"
+                                    id="rut_empresa"
+                                    label="Rut Empresa"
                                     autoFocus
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"rut")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "rut_empresa")}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="sexo"
+                                    name="nombre_empresa"
                                     required
                                     fullWidth
-                                    id="sexo"
-                                    label="Sexo"
+                                    id="nombre_empresa"
+                                    label="Nombre Empresa"
                                     autoFocus
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"sexo")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "nombre_empresa")}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="pais"
+                                    name="tel_contacto"
                                     required
                                     fullWidth
-                                    id="pais"
-                                    label="País"
+                                    id="tel_contacto"
+                                    label="Telefono de Contacto"
                                     autoFocus
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"pais")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "tel_contacto")}
                                 />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                {/* <TextField
-                                    name="fecha_nacimiento"
-                                    required
-                                    fullWidth
-                                    id="fecha_nacimiento"
-                                    label="Fecha Nacimiento"
-                                    autoFocus
-                                /> */}
-                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
-                                    <DatePicker
-                                        label="Fecha Nacimiento"
-                                        value={value}
-                                        onChange={(e)=>handleChangeUsuario(e.target.value,"fecha_nacimiento")}
-                                        renderInput={(params) => <TextField {...params} />}
-                                    />
-                                </LocalizationProvider>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -192,7 +183,7 @@ const RegistroUsuario = () => {
                                     label="Correo"
                                     name="email"
                                     autoComplete="email"
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"email")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "email")}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -204,7 +195,7 @@ const RegistroUsuario = () => {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"password")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "password")}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -216,7 +207,7 @@ const RegistroUsuario = () => {
                                     type="password"
                                     id="password_2"
                                     autoComplete="confirm-password"
-                                    onChange={(e)=>handleChangeUsuario(e.target.value,"password_confirm")}
+                                    onChange={(e) => handleChangeUsuario(e.target.value, "password_confirm")}
                                 />
                                 {formErrors.password && (
                                     <Alert severity="error">{formErrors.password}</Alert>
@@ -253,4 +244,11 @@ const RegistroUsuario = () => {
     )
 }
 
-export default RegistroUsuario;
+//export default RegistroEmpleador;
+export default function IntegrationNotistack() {
+    return (
+        <SnackbarProvider maxSnack={3}>
+            <RegistroEmpleador />
+        </SnackbarProvider>
+    );
+}

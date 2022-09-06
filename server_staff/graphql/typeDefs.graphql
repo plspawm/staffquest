@@ -1,12 +1,14 @@
 type Query {
     getUsuarios: [Usuario]
-    getEmpleadores: [Empleador]
+    getEmpleadores: [Empleador],
+    getUsuario(uid: String!): [Usuario],
+    getEmpleador(uid: String!): [Empleador]
 }
 
 type Mutation {
     createUsuario(nombres: String, apellidos: String, email: String!, rut: String, sexo: String, pais: String, fecha_nacimiento: String, uid: String): Usuario
     createEmpleador(nombres: String, apellido: String,
-    email: String, rut_empresa: String, nombre_empresa: String, uid: String): Empleador
+    email: String, rut_empresa: String, nombre_empresa: String, uid: String, tel_contacto: String): Empleador
 }
 
 type AuthPayload {
@@ -33,5 +35,6 @@ type Empleador {
     email: String,
     rut_empresa: String,
     nombre_empresa: String,
-    uid: String
+    uid: String,
+    tel_contacto: String
 }

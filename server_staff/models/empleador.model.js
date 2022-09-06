@@ -17,6 +17,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         uid: {
             type: Sequelize.STRING
+        },
+        tel_contacto: {
+            type: Sequelize.STRING
         }
     });
     return Empleador;
