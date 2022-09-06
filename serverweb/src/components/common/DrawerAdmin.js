@@ -21,19 +21,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 const data = [
     {
-        name: "Home",
-        icon: <HomeOutlined />,
-        enlace: "/usuario"
+        name: "Inicio",
+        icon: <HomeOutlined />
     },
-    { name: "Info Personal", icon: <PermIdentityIcon />, enlace: "/usuario/home" },
-    { name: "Formación Academica", icon: <SchoolIcon />, enlace: "/usuario/formacion" },
-    { name: "CV", icon: <CoPresentIcon />, enlace: "/usuario/cv" },
-    { name: "Certificados", icon: <DraftsOutlined />, enlace: "/usuario/certificado" },
-    { name: "Etiquetas", icon: <LabelIcon /> },
-    { name: "Experiencia Laboral", icon: <BadgeIcon />, enlace: "/usuario/experiencia" },
+    { name: "Usuarios", icon: <PermIdentityIcon />, enlace: "/admin/usuarios" },
+    { name: "Ofertas Publicadas", icon: <SchoolIcon /> },
+    { name: "Empleadores", icon: <SchoolIcon /> },
 ];
 
-const DrawerUsuario = (props) => {
+const DrawerAdmin = (props) => {
     const [open, setOpen] = useState(false);
     const { permanente, menu } = props;
 
@@ -61,7 +57,7 @@ const DrawerUsuario = (props) => {
                     alignItems: 'center',
                     height: 50,
                 }}>
-                    <Typography variant="h5" style={{margin: 'auto'}}>Perfil</Typography>
+                    <Typography variant="h6" style={{margin: 'auto'}}>Panel de Control</Typography>
                 </AppBar>
                 {getList()}
             </Drawer>
@@ -78,4 +74,4 @@ const DrawerUsuario = (props) => {
     )
 }
 
-export default DrawerUsuario;
+export default DrawerAdmin;

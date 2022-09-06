@@ -1,14 +1,27 @@
+scalar Date
+
 type Query {
     getUsuarios: [Usuario]
     getEmpleadores: [Empleador],
     getUsuario(uid: String!): [Usuario],
-    getEmpleador(uid: String!): [Empleador]
+    getEmpleador(uid: String!): [Empleador],
+    getEstudios: [Estudio],
+    getNivelProfesionales: [Nivelprofesional],
+    getCertificados: [Certificado]
 }
 
 type Mutation {
     createUsuario(nombres: String, apellidos: String, email: String!, rut: String, sexo: String, pais: String, fecha_nacimiento: String, uid: String): Usuario
     createEmpleador(nombres: String, apellido: String,
     email: String, rut_empresa: String, nombre_empresa: String, uid: String, tel_contacto: String): Empleador
+    createEstudio(nombre: String) : Estudio
+    createNivelprofesional(input: NivelInput) : Nivelprofesional
+    updateUsuario(id: ID!, input: UsuarioInput) : Usuario
+    createAcademica(input: AcademicaInput): Academica
+    createCertificado(nombre: String, ruta: String, usuarioId: Int) : Certificado
+    createExperiencia(cargo: String, empresa: String, fecha_desde: String, fecha_hasta: String, descripcion: String,
+    trabajo_actual: String, usuarioId: Int) : Experiencia
+    createCv(nombre: String, ruta: String, usuarioId: Int) : Cv
 }
 
 type AuthPayload {
@@ -25,7 +38,22 @@ type Usuario {
     sexo: String,
     pais: String,
     fecha_nacimiento: String,
-    uid: String
+    uid: String,
+    direccion: String,
+    region: String,
+    nacionalidad: String,
+    disponiblidad: String,
+    telefono: String,
+    especialidad: String,
+    nivel_estudio: String,
+    nivel_profesional: String,
+    anios_experiencia: String,
+    discapacidad: String,
+    descripcion: String,
+    academicas: [Academica],
+    certificados: [Certificado]
+    experiencias: [Experiencia]
+    cvs: [Cv]
 }
 
 type Empleador {
@@ -37,4 +65,84 @@ type Empleador {
     nombre_empresa: String,
     uid: String,
     tel_contacto: String
+}
+
+type Estudio {
+    id: ID!,
+    nombre: String!
+}
+
+type Nivelprofesional {
+    id: ID!,
+    nombre: String!
+}
+
+type Academica {
+    id: ID!,
+    titulo: String,
+    institucion: String,
+    fecha_desde: String,
+    fecha_hasta: String,
+    ruta: String,
+    estado: String,
+    usuarioId: Int
+}
+
+type Certificado {
+    id: ID!,
+    nombre: String,
+    ruta: String
+}
+
+type Experiencia {
+    id: ID!,
+    cargo: String,
+    empresa: String,
+    fecha_desde: String,
+    fecha_hasta: String,
+    descripcion: String,
+    trabajo_actual: String
+    usuarioId: Int
+}
+
+type Cv {
+    id: ID!,
+    nombre: String,
+    ruta: String
+}
+
+input NivelInput {
+    nombre: String!
+}
+
+input UsuarioInput {
+    nombres: String,
+    apellidos: String,
+    email: String,
+    rut: String,
+    sexo: String,
+    pais: String,
+    fecha_nacimiento: String,
+    uid: String,
+    direccion: String,
+    region: String,
+    nacionalidad: String,
+    disponiblidad: String,
+    telefono: String,
+    especialidad: String,
+    nivel_estudio: String,
+    nivel_profesional: String,
+    anios_experiencia: String,
+    discapacidad: String,
+    descripcion: String
+}
+
+input AcademicaInput {
+    titulo: String,
+    institucion: String,
+    fecha_desde: String,
+    fecha_hasta: String,
+    ruta: String,
+    estado: String,
+    usuarioId: Int
 }

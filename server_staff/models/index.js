@@ -32,5 +32,28 @@ db.sequelize = sequelize;
 
 db.usuarios = require("./usuario.model")(sequelize, Sequelize);
 db.empleador = require("./empleador.model")(sequelize, Sequelize);
+db.estudio = require("./estudio.model")(sequelize, Sequelize);
+db.nivelprofesional = require("./nivelprofesional.model")(sequelize, Sequelize);
+db.academica = require("./academica.model")(sequelize, Sequelize);
+db.certificado = require("./certificado.model")(sequelize, Sequelize);
+db.experiencia = require("./experiencia.model")(sequelize, Sequelize);
+db.cv = require("./cv.model")(sequelize, Sequelize);
+
+//Asociaciones
+//Un usuario tiene muchas formaciones academicas
+db.usuarios.hasMany(db.academica, {as: "academia"});
+db.academica.belongsTo(db.usuarios, {foreingKey: "usuarioId", as: "usuario"});
+
+//Un usuario tiene muchos certificados
+db.usuarios.hasMany(db.certificado, {as: "certificados"});
+db.certificado.belongsTo(db.usuarios, {foreingKey: "usuarioId", as: "usuario"});
+
+//Un usuario tiene muchas experiencias
+db.usuarios.hasMany(db.experiencia, {as: "experiencias"});
+db.experiencia.belongsTo(db.usuarios, {foreingKey: "usuarioId", as: "usuario"});
+
+//Un usuario tiene muchos cv
+db.usuarios.hasMany(db.cv, {as: "cvs"});
+db.cv.belongsTo(db.usuarios, {foreingKey: "usuarioId", as: "usuario"});
 
 module.exports = db;

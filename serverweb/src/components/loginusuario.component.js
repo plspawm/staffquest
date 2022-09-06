@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, createSearchParams } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 /** Material UI */
@@ -27,9 +27,10 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from 'graphql-tag';
 
 
-const READ_EMPLEADOR = gql`
-    query getEmpleador($uid: String!) {
-        getEmpleador(uid: $uid) {
+const READ_USUARIO = gql`
+    query getUsuario($uid: String!) {
+        getUsuario(uid: $uid) {
+            id,
             nombres
         }
     }
@@ -59,7 +60,7 @@ function Copyright(props) {
 
 function GetEmpleado({ uid }) {
     console.log(uid);
-    const { loading, error, data } = useQuery(READ_EMPLEADOR, { variables: { uid } });
+    const { loading, error, data } = useQuery(READ_USUARIO, { variables: { uid } });
     if (loading) return null;
     if (error) console.error(error);
     if (data) {
@@ -71,17 +72,12 @@ function GetEmpleado({ uid }) {
 
 const theme = createTheme();
 
-export default function Login() {
+export default function LoginUsuario() {
     const auth = getAuth(firebaseApp);
     const [user, loading] = useAuthState(auth);
     const [uid, setUid] = useState('');
     const navigate = useNavigate();
-    const { data, error } = useQuery(READ_EMPLEADOR, { variables: { uid: uid } });
-
-    if(error) console.error(error);
-    if(data) {
-        console.log("DATA", data);
-    }
+    const { loading: usuarioLoading, error: usuarioError, data = {getUsuario : []} } = useQuery(READ_USUARIO, { variables: { uid: uid } });
 
     useEffect(() => {
         if (loading) {
@@ -89,23 +85,32 @@ export default function Login() {
             return;
         }
         //if (user) navigate("/inicio");
-    }, [user, loading])
+    }, [user, loading, data]);
+
+    if(usuarioLoading) return <p>Cargando...</p>;
+    if(usuarioError) console.error(usuarioError);
+    if(data) {
+        console.log(uid);
+        console.log("DATA", data.getUsuario);
+    }
+    if(data.getUsuario.length>0) {
+        console.log("Data", data);
+        sessionStorage.setItem('ID USER', data.getUsuario[0].id);
+        navigate("/usuario");
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
+        const dataForm = new FormData(event.currentTarget);
         console.log({
-            email: data.get('email'),
-            password: data.get('password'),
+            email: dataForm.get('email'),
+            password: dataForm.get('password'),
         });
 
-        signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
+        signInWithEmailAndPassword(auth, dataForm.get('email'), dataForm.get('password'))
             .then(resp => {
                 console.log("RESP", resp);
                 setUid(resp.user.uid);
-                if(data) {
-                    navigate("/empleador");
-                }
             })
             .catch(err => {
                 console.log(err);
@@ -115,6 +120,7 @@ export default function Login() {
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
+                {console.log(data)}
                 <CssBaseline />
                 <Box
                     sx={{

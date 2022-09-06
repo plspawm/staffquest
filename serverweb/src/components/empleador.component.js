@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, Outlet } from "react-router-dom";
-import DrawerUsuario from "./common/DrawerUsuario";
+import DraweEmpleador from "./common/DrawerEmpleador";
 
 /** Firebase */
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
@@ -31,7 +31,7 @@ const data = [
 ];
 
 
-const Usuario = () => {
+const Empleador = () => {
     const [open, setOpen] = useState(false);
     const theme = useTheme();
     const isMatch = useMediaQuery(theme.breakpoints.down("md"));
@@ -58,7 +58,7 @@ const Usuario = () => {
     const drawer = (
         <Drawer open={open} variant="permanent" anchor="left" onClose={() => setOpen(false)}>
             <AppBar position="static">
-                <Typography variant="h5">Usuario</Typography>
+                <Typography variant="h5">Empleador</Typography>
             </AppBar>
             {getList()}
         </Drawer>
@@ -72,8 +72,8 @@ const Usuario = () => {
                         <Box sx={{ flexGrow: 1 }}>
                             <AppBar>
                                 <Toolbar>
-                                    <DrawerUsuario menu={true} />
-                                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>PRUEBA</Typography>
+                                    <DraweEmpleador menu={true} />
+                                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>StaffQuest</Typography>
                                 </Toolbar>
                             </AppBar>
                         </Box>
@@ -83,7 +83,7 @@ const Usuario = () => {
                     </>
                 ) : (
                     <div style={{ marginLeft: 260 }}>
-                        <DrawerUsuario permanente={true} />
+                        <DraweEmpleador permanente={true} />
                         {/* <Typography>NO RESPONSIVE</Typography> */}
                         <Outlet />
                     </div>
@@ -93,4 +93,4 @@ const Usuario = () => {
     )
 }
 
-export default Usuario;
+export default Empleador;

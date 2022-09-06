@@ -178,7 +178,6 @@ const RegistroUsuario = () => {
                                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
                                     <DatePicker
                                         label="Fecha Nacimiento"
-                                        value={value}
                                         onChange={(e)=>handleChangeUsuario(e.target.value,"fecha_nacimiento")}
                                         renderInput={(params) => <TextField {...params} />}
                                     />

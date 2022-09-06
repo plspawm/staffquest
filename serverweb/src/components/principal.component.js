@@ -76,6 +76,7 @@ const Principal = (props) => {
 
 
     const logout = () => {
+        sessionStorage.removeItem('ID USER');
         signOut(auth);
     };
 
